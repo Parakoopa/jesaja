@@ -1,16 +1,27 @@
 set jesaja_FILENAME ~/austausch/.jesaja
 
 set jesaja_bible_get__r;
-set jesaja_load_next__r;
+set jesaja_load__r;
 
-function jesaja_next -d "Display the current verse"
+function jesaja_next -d "Display the next verse and advance"
   # todo actual current verse
-  __jesaja_load_next
-  jesaja_bible_get $jesaja_load_next__r[1] $jesaja_load_next__r[2] $jesaja_load_next__r[3]
+  __jesaja_load
+  jesaja_bible_get $jesaja_load__r[4] $jesaja_load__r[5] $jesaja_load__r[6]
   if [ $status -ne 0 ]
     printf (set_color F00)"Konnte nicht mit Server verbinden, läuft er?"(set_color normal)"\n"
   else
     __jesaja_save_next
+    __jesaja_printverse
+  end
+end
+
+function jesaja_current -d "Display the current verse"
+  # todo actual current verse
+  __jesaja_load
+  jesaja_bible_get $jesaja_load__r[1] $jesaja_load__r[2] $jesaja_load__r[3]
+  if [ $status -ne 0 ]
+    printf (set_color F00)"Konnte nicht mit Server verbinden, läuft er?"(set_color normal)"\n"
+  else
     __jesaja_printverse
   end
 end
@@ -35,12 +46,13 @@ function __jesaja_printverse
 end
 
 function __jesaja_save_next
-  echo "$jesaja_bible_get__r[5]"\n"$jesaja_bible_get__r[6]"\n"$jesaja_bible_get__r[7]" > $jesaja_FILENAME
+  echo "$jesaja_load__r[4]"\n"$jesaja_load__r[5]"\n"$jesaja_load__r[6]"\n"$jesaja_bible_get__r[5]"\n"$jesaja_bible_get__r[6]"\n"$jesaja_bible_get__r[7]" > $jesaja_FILENAME
 end
 
-function __jesaja_load_next
+function __jesaja_load
   if [ ! -f $jesaja_FILENAME ]
-    echo 1\n1\n1 > $jesaja_FILENAME;
+    # First three are current, next three are next
+    echo 1\n1\n1\n1\n1\n1 > $jesaja_FILENAME;
   end
-  set jesaja_load_next__r (cat $jesaja_FILENAME);
+  set jesaja_load__r (cat $jesaja_FILENAME);
 end
