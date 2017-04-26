@@ -1,28 +1,46 @@
-set -l BOOK_FILE "bible.xml"
+set jesaja_FILENAME ~/austausch/.jesaja
 
-set bible_get__r;
+set jesaja_bible_get__r;
+set jesaja_load_next__r;
 
-function jesaja_last -d "Display the current verse"
+function jesaja_next -d "Display the current verse"
   # todo actual current verse
-  __jesaja_bible_get 45 1 1
+  __jesaja_load_next
+  jesaja_bible_get $jesaja_load_next__r[1] $jesaja_load_next__r[2] $jesaja_load_next__r[3]
   if [ $status -ne 0 ]
     printf (set_color F00)"Konnte nicht mit Server verbinden, läuft er?"(set_color normal)"\n"
   else
-    printf (set_color yellow)"»"$bible_get__r[1]"«"(set_color green)"\n  - "$bible_get__r[2]" "$bible_get__r[3]","$bible_get__r[4](set_color normal)"\n"
-    #" ("$bible_get__r[5]")\n"
+    __jesaja_save_next
+    __jesaja_printverse
   end
 end
 
-function __jesaja_bible_get -d "Get a specific verse"
+function jesaja_bible_get -d "Get a specific verse"
   set -l bnumber $argv[1]
   set -l cnumber $argv[2]
   set -l vnumber $argv[3]
-  set bible_get__r (curl "http://localhost:3055/fish/$bnumber/$cnumber/$vnumber" 2> /dev/null)
+  set jesaja_bible_get__r (curl "http://localhost:3055/fish/$bnumber/$cnumber/$vnumber" 2> /dev/null)
   return $status # not really needed, but added anyway to make clear.
 end
 
 function __jesaja_greeting -d "Display the current verse as greeting"
   echo
-  jesaja_last
+  jesaja_next
   echo
+end
+
+function __jesaja_printverse
+  printf (set_color yellow)"»"$jesaja_bible_get__r[1]"«"(set_color green)"\n  - "$jesaja_bible_get__r[2]" "$jesaja_bible_get__r[3]","$jesaja_bible_get__r[4](set_color normal)"\n"
+  #" ("$jesaja_bible_get__r[5]")\n"
+end
+
+function __jesaja_save_next
+  echo "$jesaja_bible_get__r[5]"\n"$jesaja_bible_get__r[6]"\n"$jesaja_bible_get__r[7]" > $jesaja_FILENAME
+end
+
+function __jesaja_load_next
+  if [ ! -f $jesaja_FILENAME ]
+    echo 1\n1\n1 > $jesaja_FILENAME;
+  end
+  set jesaja_load_next__r (cat $jesaja_FILENAME);
 end
