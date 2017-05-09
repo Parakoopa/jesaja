@@ -8,7 +8,7 @@ var express = require('express');
 
 const NL = "\n";
 
-const BIBLE_FILE = 'bible.xml';
+const BIBLE_FILE = '../bible.xml';
 
 const BOOK_LIST = {
   1: "1.Mose",

@@ -1,0 +1,11 @@
+[Unit]
+Description=Jesaja Bible Browser Server
+
+[Service]
+ExecStart=~/bin/jesaja_server
+Restart=on-failure
+SuccessExitStatus=3 4
+RestartForceExitStatus=3 4
+
+[Install]
+WantedBy=default.target
