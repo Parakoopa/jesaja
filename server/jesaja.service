@@ -2,7 +2,7 @@
 Description=Jesaja Bible Browser Server
 
 [Service]
-ExecStart=~/bin/jesaja_server
+ExecStart=/home/marco/bin/jesaja_server
 Restart=on-failure
 SuccessExitStatus=3 4
 RestartForceExitStatus=3 4
